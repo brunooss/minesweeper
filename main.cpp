@@ -3,24 +3,26 @@
 #include <cstdlib>
 #include <ctime>
 
-#define N 20
-#define M 20
-#define B 50
+#define N 10
+#define M 10
+#define B 30
 
 
-/*	B È a qtd. de bombas, N È a largura e M È a altura 
-	B deve ser no m·ximo uns 4/5 de N*M para o algoritmo 
-	de gerar as bombas funcionar r·pido.*/
+/*	B √© a qtd. de bombas, N √© a largura e M √© a altura 
+	B deve ser no m√°ximo uns 4/5 de N*M para o algoritmo 
+	de gerar as bombas funcionar r√°pido.*/
 
 #define Min(a, b) ( ((a) < (b)) ? (a) : (b) )
 #define Max(a, b) ( ((a) > (b)) ? (a) : (b) )
 
 	
-	
 char tab[N*M];
 char viz[N*M];
+int qviz;
+char marc[N*M];
 
-
+int ex[] = {0, -1, 0, 1};
+int ey[] = {1, 0, -1, 0};
 
 int ale(){
 	int x = rand()%(N*M);
@@ -28,48 +30,33 @@ int ale(){
 	return x;
 }
 
+void geranumeros(int i,int j){
+	for(int dx=-1;dx<=1;dx++){
+		for(int dy=-1;dy<=1;dy++){
+			if((dx==0)&&(dy==0)) continue;
+			if((i+dx<0)||(i+dx>=N)||(j+dy<0)||(j+dy>=M)) continue;
+			if(tab[(i+dx)*M+j+dy]!=-1) tab[(i+dx)*M+j+dy]++;
+		}
+	}
+}
+
 void gerabombas(){
 	int bomb = B;
 	int sq;
 	srand(time(NULL));
 	while(bomb){
-		if(!tab[sq = ale()]){
+		if(tab[sq = ale()]!=-1){
 			bomb--;
 			tab[sq] = -1;
+			int i = sq/M;
+			int j = sq%M;
+			geranumeros(i, j);
 		}
 	}
 }
 
-int conta(int a){
-	int i = a/N;
-	int j = a%N;
-	
-}
 
-//void geranumeros(){
-//	for(int i=0;i<N;i++){
-//		for(int j=0;j<M-1;j++){
-//			if(tab[i*N+j]) continue;
-//			tab[i*N+j] = conta(i*N+j);
-//		}
-//	}
-//}
 
-void geranumeros(){
-	for(int dx=-1;dx<=1;dx++){
-		for(int dy=-1;dy<=1;dy++){
-			if((dx==0)&&(dy==0)) continue;
-			for(int i=Max(0, -dx);i<Min(N, N-dx);i++){
-				for(int j=Max(0, -dy);j<Min(M, M-dy);j++){
-					int l = M*i + j;
-					int k = M*(i+dx) + j+dy;
-					if(tab[k]==-1) continue;
-					if(tab[l]==-1) tab[k]++;
-				}
-			}
-		}
-	}
-}
 
 
 int printab(){
@@ -80,7 +67,7 @@ int printab(){
 	for(int i=0;i<N;i++){
 		for(int j=0;j<M-1;j++){
 			printf("%3d ", tab[i*M+j]);
-			if(tab[i*N+j]==-1) r++;
+			if(tab[i*M+j]==-1) r++;
 		}
 		printf("%3d\n", tab[i*M+M-1]);
 		printf("\n");
@@ -94,9 +81,6 @@ int printab(){
 char form(int a){
 	if(!viz[a]){
 		return '*';
-	}
-	if(tab[a]==-1){
-		return '<';
 	}
 	return '0' + tab[a];
 }
@@ -124,50 +108,102 @@ int prinjogo(){
 	return r;
 }
 
+void dfs(int x, int y){
+	int c = x*M+y;
+	if(viz[c]==0){
+		viz[c] = 1;
+		qviz++;
+	}
+	if(tab[c]!=0) return;
+	if(marc[c]!=0) return;
+	marc[c] = 1;
+	
+	for(int i=0;i<4;i++){
+		int a = x+ex[i];
+		int b = y+ey[i];
+		if((a<0)||(a>=N)||(b<0)||(b>=M)) continue;
+		if(marc[a*M+b]==0){
+			dfs(a, b);
+		}
+	}
+}
+
 int acao(int x, int y){
 	int c = x*M+y;
 	if(tab[c]==-1){
 		return -1;
 	}
 	if(tab[c]!=0){
-		viz[c] = 1;
+		if(viz[c]==0){
+			viz[c] = 1;
+			qviz++;
+		}
 		return 0;
 	}
-	viz[c] = 1;
+	dfs(x, y);
 	return 0;
 }
 
+
 void perdeu(){
 	printab();
-	printf("\nEstourou a bomba!\nAcabou o jogo :(\n");
+	printf("\nEstourou a bomba!\nAcabou o jogo :(\nEntre r para reiniciar\n");
 }
 
-void jogo(){
+void ganhou(){
+	printf("\nParabens!\nEntre r para reiniciar\n");
+}
+
+int jogo(){
 	int x, y;
+	int status = 0;
 	while(1){
 		prinjogo();
 		printf("digite as coordenadas:\n");
-		scanf("%d %d", &x, &y);
+		int n = scanf("%d %d", &x, &y);
+		if(n!=2){
+			status = 1;
+			break;
+		}
 		if(acao(x, y)){
-		perdeu();
+			perdeu();
+			break;
+		}
+		if(qviz==(N*M-B)){
+			ganhou();
 			break;
 		}
 	}
+	return status;
 }
 
-
+void limpa(){
+	for(int i=0;i<N*M;i++){
+		tab[i] = 0;
+		marc[i] = 0;
+		viz[i] = 0;
+		qviz = 0;
+	}
+}
 
 int main(){
-	
-	
-	gerabombas();
-	geranumeros();
-	
-//	printf("\n\n%d\n", printab());
-	jogo();
+
+	char c;
+	while(1){
+		limpa();
+		gerabombas();
+		int status = jogo();
+		if(status!=0){
+			printf("deu algum erro!\n");
+			break;
+		}
+		scanf(" %c", &c);
+		if(c!='r'){
+			break;
+		}
+	}
 	
 }
-
 
 
 
