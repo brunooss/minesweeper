@@ -1,7 +1,5 @@
 #include "vazia.hpp"
 
-#include <iostream>
-
 Vazia::Vazia(){
 	this->bomba = false;
 	this->bandeira = false;
