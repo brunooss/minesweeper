@@ -1,5 +1,4 @@
 #include "tabuleiro.hpp"
-#include <iostream>
 #include <ctime>
 #include <cstdlib>
 
@@ -80,6 +79,7 @@ bool Tabuleiro::checarVitoria(){
 std::vector<std::vector<bool>> Tabuleiro::gerarBombas(int lin, int col){
 	srand(time(NULL));
 	std::vector<std::vector<bool>> tabBombas;
+	
 	for (int i = 0; i < this->nLinhas; i++){
 		std::vector<bool> linha;
 		
@@ -95,9 +95,8 @@ std::vector<std::vector<bool>> Tabuleiro::gerarBombas(int lin, int col){
 		
 		while (1){
 			rLin = rand() % (this->nLinhas);
-			rCol = rand() % (this->nLinhas);
-			
-			if (rLin != lin and rCol != col){
+			rCol = rand() % (this->nColunas);
+			if (rLin != lin or rCol != col){
 				if (!tabBombas[rLin][rCol]){
 					break;
 				}
