@@ -2,30 +2,6 @@
 #include <iostream>
 #include <vector>
 
-void printTabuleiro(Tabuleiro tabuleiro){
-	int lin = tabuleiro.getNLinhas();
-	int col = tabuleiro.getNColunas();
-	std::vector<std::vector<Casa*>> casas = tabuleiro.getCasas();
-	
-	std::cout << std::endl;
-	
-	for (int i = 0; i < lin; i++){
-		for (int j = 0; j < col; j++){
-			if (casas[i][j]->isRevelada()){
-				if (casas[i][j]->isBomba()){
-					std::cout << "B ";
-				} else{
-					std::cout << casas[i][j]->getContagem() << " ";
-				}
-			} else{
-				std::cout << "* ";
-			}
-		}
-		
-		std::cout << std::endl;
-	}
-}
-
 void printTabuleiroRevelado(Tabuleiro tabuleiro){
 	int lin = tabuleiro.getNLinhas();
 	int col = tabuleiro.getNColunas();
@@ -47,20 +23,19 @@ void printTabuleiroRevelado(Tabuleiro tabuleiro){
 }
 
 int main(){
-	int nLin, nCol, bombas;
+	int dificuldade;
 	bool fim = false;
+	std::string espacos(14, ' ');
 	
-	std::cout << "Digite o numero de linhas: ";
-	std::cin >> nLin;
+	std::cout << "Dificuldades: 1 - facil (8x8)\n" << espacos << "2 - media (12x12)\n" << espacos << "3 - dificil (18x18)" << std::endl << std::endl;
 	
-	std::cout << "Digite o numero de colunas: ";
-	std::cin >> nCol;
+	do{
+		std::cout << "Qual a dificuldade desejada? ";
+		std::cin >> dificuldade;
+	} while (dificuldade < 1 or dificuldade > 3);
 	
-	std::cout << "Digite o numero de bombas: ";
-	std::cin >> bombas;
-	
-	Tabuleiro tabuleiro(nCol, nLin, bombas);
-	int lin, col;
+	Tabuleiro tabuleiro(dificuldade);
+	int lin, col, nLin = tabuleiro.getNLinhas(), nCol = tabuleiro.getNColunas();
 	
 	std::cout << "\nDigite a linha (1 a " << nLin << "): ";
 	std::cin >> lin;
@@ -71,9 +46,9 @@ int main(){
 	col--;
 	
 	tabuleiro.criarTabuleiro(lin, col);
-	printTabuleiroRevelado(tabuleiro);
+	//printTabuleiroRevelado(tabuleiro);
 	tabuleiro.revelarCasas(lin, col);
-	printTabuleiro(tabuleiro);
+	tabuleiro.printTabuleiro();
 	
 	if (tabuleiro.checarDerrota(lin, col)){
 		std::cout << "\nVoce perdeu!" << std::endl;
@@ -83,24 +58,83 @@ int main(){
 		fim = true;
 	}
 	
-	while (!fim){
+	char resposta;
+	
+	while (1){
+		while (!fim){
+			
+			std::cout << "\nDigite a linha (1 a " << nLin << "): ";
+			std::cin >> lin;
+			lin--;
+			std::cout << "Digite a coluna (1 a " << nCol << "): ";
+			std::cin >> col;
+			col--;
+			
+			tabuleiro.revelarCasas(lin, col);
+			tabuleiro.printTabuleiro();
+			
+			if (tabuleiro.checarDerrota(lin, col)){
+				std::cout << "\nVoce perdeu!" << std::endl;
+				fim = true;
+			} else if (tabuleiro.checarVitoria()){
+				std::cout << "\nVoce venceu!" << std::endl;
+				fim = true;
+			}
+		}
 		
-		std::cout << "\nDigite a linha (1 a " << nLin << "): ";
-		std::cin >> lin;
-		lin--;
-		std::cout << "Digite a coluna (1 a " << nCol << "): ";
-		std::cin >> col;
-		col--;
+		std::cout << "\nDeseja salvar a partida? (s/n) ";
+		std::cin >> resposta;
+		if (resposta == 's'){
+			tabuleiro.registrarPartida();
+			std::cout << "Partida salva!" << std::endl;
+		}
+
+		std::cout << "\nDeseja reiniciar a partida? (s/n) ";
+		std::cin >> resposta;
 		
-		tabuleiro.revelarCasas(lin, col);
-		printTabuleiro(tabuleiro);
-		
-		if (tabuleiro.checarDerrota(lin, col)){
-			std::cout << "\nVoce perdeu!" << std::endl;
-			fim = true;
-		} else if (tabuleiro.checarVitoria()){
-			std::cout << "\nVoce venceu!" << std::endl;
-			fim = true;
+		if (resposta == 's'){
+			std::cout << "\nDificuldades: 1 - facil (8x8)\n" << espacos << "2 - media (12x12)\n" << espacos << "3 - dificil (18x18)" << std::endl;
+			
+			do{
+				std::cout << "\nQual a dificuldade desejada? ";
+				std::cin >> dificuldade;
+			} while (dificuldade < 0 or dificuldade > 3);
+			
+			switch (dificuldade){
+				case 1:
+					nLin = 8;
+					nCol = 8;
+				case 2:
+					nLin = 12;
+					nCol = 12;
+				case 3:
+					nLin = 18;
+					nCol = 18;
+			}
+			
+			std::cout << "\nDigite a linha (1 a " << nLin << "): ";
+			std::cin >> lin;
+			lin--;
+			std::cout << "Digite a coluna (1 a " << nCol << "): ";
+			std::cin >> col;
+			col--;
+			
+			tabuleiro.reiniciarTabuleiro(dificuldade, lin, col);
+			tabuleiro.revelarCasas(lin, col);
+			tabuleiro.printTabuleiro();
+			fim = false;
+		} else{
+			std::vector<std::vector<Casa*>> casas = tabuleiro.getCasas();
+			
+			for (std::vector<Casa*> linha : casas){
+				for (Casa* casa : linha){
+					delete casa;
+				}
+			}
+			
+			casas.clear();
+			tabuleiro.setCasas(casas);
+			break;
 		}
 	}
 }

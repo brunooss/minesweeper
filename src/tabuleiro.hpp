@@ -11,7 +11,7 @@ class Tabuleiro{
 		std::vector<std::vector<Casa*>> casas;
 	
 	public:
-		Tabuleiro(int x, int y, int bombas);
+		Tabuleiro(int dificuldade);
 		int getNLinhas();
 		int getNColunas();
 		int getBombas();
@@ -25,6 +25,10 @@ class Tabuleiro{
 		std::vector<std::vector<bool>> gerarBombas(int lin, int col);
 		int gerarRandInt();
 		void revelarCasas(int lin, int col);
+		void registrarPartida();
+		void lerPartidas();
+		void reiniciarTabuleiro(int dificuldade, int lin, int col);
+		void printTabuleiro();
 };
 
 #endif

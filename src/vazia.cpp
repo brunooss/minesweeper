@@ -4,6 +4,7 @@ Vazia::Vazia(){
 	this->bomba = false;
 	this->bandeira = false;
 	this->revelada = false;
+	this->contagem = 0;
 }
 
 void Vazia::contarVizinhos(int lin, int col, std::vector<std::vector<Casa*>> casas){
