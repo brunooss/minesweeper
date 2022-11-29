@@ -92,7 +92,15 @@ bool Tabuleiro::checarDerrota(int lin, int col){
 }
 
 bool Tabuleiro::checarVitoria(){
-	return (this->nLinhas * this->nColunas - this->bombas == this->casasReveladas);
+	for (std::vector<Casa*> linha : this->casas){
+		for (Casa* casa : linha){
+			if (!casa->isRevelada() and !casa->isBomba()){
+				return false;
+			}
+		}
+	}
+	
+	return true;
 }
 
 std::vector<std::vector<bool>> Tabuleiro::gerarBombas(int lin, int col){

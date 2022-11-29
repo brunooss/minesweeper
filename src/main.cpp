@@ -46,7 +46,7 @@ int main(){
 	col--;
 	
 	tabuleiro.criarTabuleiro(lin, col);
-	//printTabuleiroRevelado(tabuleiro);
+	printTabuleiroRevelado(tabuleiro);
 	tabuleiro.revelarCasas(lin, col);
 	tabuleiro.printTabuleiro();
 	
