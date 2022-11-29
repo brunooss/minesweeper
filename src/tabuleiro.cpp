@@ -151,20 +151,15 @@ void Tabuleiro::registrarPartida(){
 	file.open("src/partidas.txt", std::ios::app);
 	
 	std::vector<std::vector<Casa*>> casas = this->casas;
-	std::string registro, binario, temp, strDecimal, vitoria;
-	int nCasas = this->nLinhas * this->nColunas, decimal, dificuldade;
-	int operacoes = nCasas / 15 + (nCasas % 15 != 0);
+	std::string binario, vitoria;
+	int dificuldade;
 	
-	switch(this->nLinhas){
-		case 8:
-			dificuldade = 1;
-			break;
-		case 12:
-			dificuldade = 2;
-			break;
-		case 18:
-			dificuldade = 3;
-			break;
+	if (this->nLinhas == 8){
+		dificuldade = 1;
+	} else if (this->nLinhas == 12){
+		dificuldade = 2;
+	} else{
+		dificuldade = 3;
 	}
 	
 	if (this->checarVitoria()){
@@ -210,7 +205,7 @@ void Tabuleiro::lerPartidas(){
 	
 	file.close();
 	
-	for (int i = 0; i < dificuldades.size(); i++){
+	for (unsigned int i = 0; i < dificuldades.size(); i++){
 		dificuldade = stoi(dificuldades[i]);
 		
 		if (dificuldade == 1){
@@ -236,7 +231,6 @@ void Tabuleiro::lerPartidas(){
 				this->bombas = 80;
 		}
 		
-		int nCasas = nLinhas * nColunas;
 		std::string registro = tabuleiros[i], bits;
 		std::vector<std::vector<Casa*>> casas;
 		
