@@ -56,23 +56,26 @@ void Tabuleiro::setCasas(std::vector<std::vector<Casa*>> casas){
 void Tabuleiro::criarTabuleiro(int lin, int col){
 	std::vector<std::vector<Casa*>> casas;
 	std::vector<std::vector<bool>> tabBombas = this->gerarBombas(lin, col);
-	
-	for (int i = 0; i < this->getNLinhas(); i++){
-		std::vector<Casa*> linha;
-		
-		for (int j = 0; j < this->getNColunas(); j++){
-			if (tabBombas[i][j]){
-				Casa* bomba = new Bomba();
-				linha.push_back(bomba);
-			} else{
-				Casa* vazia = new Vazia();
-				linha.push_back(vazia);
+	try{	
+		for (int i = 0; i < this->getNLinhas(); i++){
+			std::vector<Casa*> linha;
+			
+			for (int j = 0; j < this->getNColunas(); j++){
+				if (tabBombas[i][j]){
+					Casa* bomba = new Bomba();
+					linha.push_back(bomba);
+				} else{
+					Casa* vazia = new Vazia();
+					linha.push_back(vazia);
+				}
 			}
-		}
 		
-		casas.push_back(linha);
-	}
+			casas.push_back(linha);
 	
+		}
+	}catch(const std::bad_alloc& e){
+		std::cout << "Sem memoria para criar tabuleiro" << std::endl << e.what() << std::endl; 
+	}
 	this->casas = casas;
 	this->contagemTabuleiro();
 }
