@@ -1,5 +1,6 @@
 #include "vazia.hpp"
 
+# constrói Vazia
 Vazia::Vazia(){
 	this->bomba = false;
 	this->bandeira = false;
@@ -7,6 +8,7 @@ Vazia::Vazia(){
 	this->contagem = 0;
 }
 
+# atualiza a contagem da casa de coordenadas (lin, col) para o número de vizinhos com bombas
 void Vazia::contarVizinhos(int lin, int col, std::vector<std::vector<Casa*>> casas){
 	this->contagem = 0;
 	

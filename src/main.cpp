@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 
+
+# imprime no terminal o tabuleiro passado por parâmetro, com todas as casas reveladas
 void printTabuleiroRevelado(Tabuleiro tabuleiro){
 	int lin = tabuleiro.getNLinhas();
 	int col = tabuleiro.getNColunas();
@@ -22,6 +24,7 @@ void printTabuleiroRevelado(Tabuleiro tabuleiro){
 	}
 }
 
+# recebe como input a dificuldade e as casas a serem "clicadas", mostrando o tabuleiro depois de cada jogada
 int main(){
 	int dificuldade;
 	bool fim = false;
@@ -46,7 +49,7 @@ int main(){
 	col--;
 	
 	tabuleiro.criarTabuleiro(lin, col);
-	printTabuleiroRevelado(tabuleiro);
+	//printTabuleiroRevelado(tabuleiro);
 	tabuleiro.revelarCasas(lin, col);
 	tabuleiro.printTabuleiro();
 	

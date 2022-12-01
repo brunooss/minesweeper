@@ -1,5 +1,6 @@
 #include "bomba.hpp"
 
+# constrói Bomba
 Bomba::Bomba(){
 	this->bomba = true;
 	this->bandeira = false;

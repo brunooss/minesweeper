@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 
+# constrói tabuleiro, de acordo com a dificuldade passada por parâmetro
 Tabuleiro::Tabuleiro(int dificuldade){
 	switch (dificuldade){
 		case 1:
@@ -29,57 +30,62 @@ Tabuleiro::Tabuleiro(int dificuldade){
 	this->casasReveladas = 0;
 }
 
+# retorna o número de linhas do tabuleiro
 int Tabuleiro::getNLinhas(){
 	return this->nLinhas;
 }
 
+# retorna o número de colunas do tabuleiro
 int Tabuleiro::getNColunas(){
 	return this->nColunas;
 }
 
+# retorna o número de bombas do tabuleiro
 int Tabuleiro::getBombas(){
 	return this->bombas;
 }
 
+# retorna o número de bandeiras do tabuleiro
 int Tabuleiro::getBandeiras(){
 	return this->bandeiras;
 }
 
+# retorna a matriz de casas
 std::vector<std::vector<Casa*>> Tabuleiro::getCasas(){
 	return this->casas;
 }
 
+# atualiza a variável casas com a matriz passada por parâmetro
 void Tabuleiro::setCasas(std::vector<std::vector<Casa*>> casas){
 	this->casas = casas;
 }
 
+# cria o tabuleiro sem colocar uma bomba na casa de coordenadas (lin, col)
 void Tabuleiro::criarTabuleiro(int lin, int col){
 	std::vector<std::vector<Casa*>> casas;
 	std::vector<std::vector<bool>> tabBombas = this->gerarBombas(lin, col);
-	try{	
-		for (int i = 0; i < this->getNLinhas(); i++){
-			std::vector<Casa*> linha;
-			
-			for (int j = 0; j < this->getNColunas(); j++){
-				if (tabBombas[i][j]){
-					Casa* bomba = new Bomba();
-					linha.push_back(bomba);
-				} else{
-					Casa* vazia = new Vazia();
-					linha.push_back(vazia);
-				}
-			}
-		
-			casas.push_back(linha);
 	
+	for (int i = 0; i < this->getNLinhas(); i++){
+		std::vector<Casa*> linha;
+		
+		for (int j = 0; j < this->getNColunas(); j++){
+			if (tabBombas[i][j]){
+				Casa* bomba = new Bomba();
+				linha.push_back(bomba);
+			} else{
+				Casa* vazia = new Vazia();
+				linha.push_back(vazia);
+			}
 		}
-	}catch(const std::bad_alloc& e){
-		std::cout << "Sem memoria para criar tabuleiro" << std::endl << e.what() << std::endl; 
+		
+		casas.push_back(linha);
 	}
+	
 	this->casas = casas;
 	this->contagemTabuleiro();
 }
 
+# executa a função contarVizinhos() em todas as casas do tabuleiro
 void Tabuleiro::contagemTabuleiro(){
 	for (int i = 0; i < this->nLinhas; i++){
 		for (int j = 0; j < this->nColunas; j++){
@@ -90,10 +96,12 @@ void Tabuleiro::contagemTabuleiro(){
 	}
 }
 
+# checa se a casa clicada, presente em (lin, col), é uma bomba
 bool Tabuleiro::checarDerrota(int lin, int col){
 	return this->casas[lin][col]->isBomba();
 }
 
+# checa se não há mais casas vazias não reveladas
 bool Tabuleiro::checarVitoria(){
 	for (std::vector<Casa*> linha : this->casas){
 		for (Casa* casa : linha){
@@ -106,6 +114,7 @@ bool Tabuleiro::checarVitoria(){
 	return true;
 }
 
+# gera bombas aleatoriamente, menos na casa de coordenadas (lin, col)
 std::vector<std::vector<bool>> Tabuleiro::gerarBombas(int lin, int col){
 	srand(time(NULL));
 	std::vector<std::vector<bool>> tabBombas;
@@ -139,6 +148,7 @@ std::vector<std::vector<bool>> Tabuleiro::gerarBombas(int lin, int col){
 	return tabBombas;
 }
 
+# revela a casa (lin, col), chamando dfs(lin, col) se a contagem for 0 e revelando todas as outras bombas caso (lin, col) seja bomba
 void Tabuleiro::revelarCasas(int lin, int col){
 	if (checarDerrota(lin, col)){
 		for (int i = 0; i < this->nLinhas; i++){
@@ -157,6 +167,7 @@ void Tabuleiro::revelarCasas(int lin, int col){
 	}
 }
 
+# registra a partida no arquivo "src\partidas.txt"
 void Tabuleiro::registrarPartida(){
 	std::fstream file;
 	file.open("src/partidas.txt", std::ios::app);
@@ -189,6 +200,7 @@ void Tabuleiro::registrarPartida(){
 	file.close();
 }
 
+# lê as partidas do arquivo "src\partidas.txt" e imprime todas elas no terminal
 void Tabuleiro::lerPartidas(){
 	std::fstream file;
 	file.open("src/partidas.txt", std::ios::in);
@@ -274,6 +286,7 @@ void Tabuleiro::lerPartidas(){
 	}
 }
 
+# apaga o tabuleiro atual e cria um novo, com a dificuldade e a primeira casa passados por parâmetros
 void Tabuleiro::reiniciarTabuleiro(int dificuldade, int lin, int col){
 	for (std::vector<Casa*> linha : this->casas){
 		for (Casa* casa : linha){
@@ -304,6 +317,7 @@ void Tabuleiro::reiniciarTabuleiro(int dificuldade, int lin, int col){
 	this->criarTabuleiro(lin, col);
 }
 
+# imprime o tabuleiro no terminal
 void Tabuleiro::printTabuleiro(){
 	std::cout << std::endl;
 	
@@ -326,6 +340,7 @@ void Tabuleiro::printTabuleiro(){
 
 int dx[] = {-1, 0, 1, 1, 1, 0, -1, -1};
 int dy[] = {1, 1, 1, 0, -1, -1, -1, 0};
+# propaga revelarCasas caso a contagem de (lin, col) seja 0
 void Tabuleiro::dfs(int lin, int col){
 
 	Casa* atual = casas[lin][col];

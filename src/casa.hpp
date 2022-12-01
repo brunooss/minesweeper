@@ -11,7 +11,6 @@ class Casa{
 		int getContagem() const;
 		void setBandeira(bool estado);
 		void setRevelada(bool estado);
-		void setContagem(int contagem);
 		virtual void contarVizinhos(int lin, int col, std::vector<std::vector<Casa*>> casas);
 	
 	protected:
